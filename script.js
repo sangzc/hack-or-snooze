@@ -245,4 +245,26 @@ $(document).ready(async function() {
       $allStoriesList.append(result);
     }
 
+    $allStoriesList.on("click", ".fa-star", function(evt){
+      let storyId = evt.target.id;
+
+      if($(evt.target).hasClass("far")){
+       addFavorite(storyId); 
+      }
+      else{
+        removeFavorite(storyId);
+      } 
+      
+      $(evt.target).toggleClass("far fas");
+    });
+
+    function addFavorite(storyId){
+
+
+    }
+
+    function removeFavorite(storyId){
+
+    }
 });
+
