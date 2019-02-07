@@ -26,7 +26,7 @@ $(document).ready(async function() {
   const $navLogin = $("#nav-login");
   const $navLogOut = $("#nav-logout");
   const $navCreate = $("#nav-create");
-  const $createStoryBtn =$("#create-story-submit-button")
+  const $createStoryBtn =$("#create-story-submit-button");
 
   // if there is a token in localStorage, call User.stayLoggedIn
   //  to get an instance of User with the right details
@@ -162,7 +162,7 @@ $(document).ready(async function() {
     // render story markup
     const storyMarkup = $(
       `<li id="${story.storyId}">
-          <i class='far fa-star'></i>
+          <i class='far fa-star hidden'></i>
           <a class="article-link" href="${story.url}" target="a_blank">
             <strong>${story.title}</strong>
            </a>
@@ -188,10 +188,14 @@ $(document).ready(async function() {
     elementsArr.forEach(val => val.hide());
   }
 
+  /**everything we want to happen in the UI when the user logs in */
   function showNavForLoggedInUser() {
+    //We have to declare $star variable here because it is being made by the JS and cant be delcared when the page loads
+    const $star = $(".fa-star");
     $navLogin.hide();
     $navLogOut.show();
     $navCreate.show();
+    $star.show();
   }
 
   // simple function to pull the hostname from a URL
@@ -240,16 +244,18 @@ $(document).ready(async function() {
   })
 
   // Creating a helper function to add a single story to the DOM when a user creates a story so they can see it right away
-    function appendStory(story) {
+  function appendStory(story) {
       const result = generateStoryHTML(story);
       $allStoriesList.append(result);
     }
 
-    $allStoriesList.on("click", ".fa-star", function(evt){
-      let storyId = evt.target.id;
+    $allStoriesList.on("click", ".fa-star", async function(evt){
+      debugger
+      let storyId = evt.target.parentElement.id;
 
+      console.log(storyId)
       if($(evt.target).hasClass("far")){
-       addFavorite(storyId); 
+        await addFavorite(storyId); 
       }
       else{
         removeFavorite(storyId);
@@ -258,8 +264,12 @@ $(document).ready(async function() {
       $(evt.target).toggleClass("far fas");
     });
 
-    function addFavorite(storyId){
-
+    async function addFavorite(storyId){
+      let userName = user.username;
+      let token = user.loginToken;
+      console.log(userName,token, storyId)
+      let response = await $.post(`https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`, {token})
+      return response;
 
     }
 
