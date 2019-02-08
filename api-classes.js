@@ -148,6 +148,26 @@ class User {
     );
     return existingUser;
   }
+
+  async addFavorite(storyId){
+    let userName = this.username;
+    let token = this.loginToken;
+    let response = await $.post(`https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`, {token})
+    return this.favorites = response;
+
+  }
+
+  async removeFavorite(storyId){
+    let userName = this.username;
+    let token = this.loginToken;
+    let response = await $.ajax(
+        {url: `https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`,
+        type: "DELETE", 
+        data: {token}});
+    return response;
+  }
+
+
 }
 /**
  * Class to represent a single story. Has one method to update.

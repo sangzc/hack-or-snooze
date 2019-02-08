@@ -254,36 +254,41 @@ $(document).ready(async function() {
 
     $allStoriesList.on("click", ".fa-star", async function(evt){
       let storyId = evt.target.parentElement.id;
+      let userFavorites;
 
       if($(evt.target).hasClass("far")){
-        await addFavorite(storyId); 
+        await user.addFavorite(storyId);
+        // await addFavorite(storyId); 
       }
       else{
-        removeFavorite(storyId);
+        await user.removeFavorite(storyId);
+        // removeFavorite(storyId);
       } 
       
       $(evt.target).toggleClass("far fas");
     });
 
-    async function addFavorite(storyId){
-      let userName = user.username;
-      let token = user.loginToken;
-      let response = await $.post(`https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`, {token})
-      return response;
+    // async function addFavorite(storyId){
+    //   let userName = user.username;
+    //   let token = user.loginToken;
+    //   let response = await $.post(`https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`, {token})
+    //   return response;
 
-    }
+    // }
 
-    async function removeFavorite(storyId){
-      let userName = user.username;
-      let token = user.loginToken;
-      let response = await $.ajax(
-          {url: `https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`,
-          type: "DELETE", 
-          data: {token}});
-      return response;
-    }
+    // async function removeFavorite(storyId){
+    //   let userName = user.username;
+    //   let token = user.loginToken;
+    //   let response = await $.ajax(
+    //       {url: `https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`,
+    //       type: "DELETE", 
+    //       data: {token}});
+    //   return response;
+    // }
 
     $navFavorites.on("click", async function() {
+
+      $favArticles.empty();
 
       $allStoriesList.toggle();
       $favArticles.toggle();
