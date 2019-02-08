@@ -26,6 +26,7 @@ $(document).ready(async function() {
   const $navLogin = $("#nav-login");
   const $navLogOut = $("#nav-logout");
   const $navCreate = $("#nav-create");
+  const $navFavorites = $("#nav-favorites");
   const $createStoryBtn =$("#create-story-submit-button");
 
   // if there is a token in localStorage, call User.stayLoggedIn
@@ -195,6 +196,7 @@ $(document).ready(async function() {
     $navLogin.hide();
     $navLogOut.show();
     $navCreate.show();
+    $navFavorites.show();
     $star.show();
   }
 
@@ -250,10 +252,8 @@ $(document).ready(async function() {
     }
 
     $allStoriesList.on("click", ".fa-star", async function(evt){
-      debugger
       let storyId = evt.target.parentElement.id;
 
-      console.log(storyId)
       if($(evt.target).hasClass("far")){
         await addFavorite(storyId); 
       }
@@ -267,14 +267,19 @@ $(document).ready(async function() {
     async function addFavorite(storyId){
       let userName = user.username;
       let token = user.loginToken;
-      console.log(userName,token, storyId)
       let response = await $.post(`https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`, {token})
       return response;
 
     }
 
-    function removeFavorite(storyId){
-
+    async function removeFavorite(storyId){
+      let userName = user.username;
+      let token = user.loginToken;
+      let response = await $.ajax(
+          {url: `https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`,
+          type: "DELETE", 
+          data: {token}});
+      return response;
     }
 });
 
