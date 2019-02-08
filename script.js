@@ -118,7 +118,7 @@ $(document).ready(async function() {
   /**
    * A rendering function to run to reset the forms and hide the login info
    */
-  function loginAndSubmitForm() {
+  async function loginAndSubmitForm() {
     // hide the forms for logging in and signing up
     $loginForm.hide();
     $createAccountForm.hide();
@@ -129,6 +129,7 @@ $(document).ready(async function() {
 
     // show the stories
     $allStoriesList.show();
+    await generateStories();
 
     // update the navigation bar
     showNavForLoggedInUser();
@@ -149,22 +150,49 @@ $(document).ready(async function() {
 
     // loop through all of our stories and generate HTML for them
     storyList.stories.forEach(function(story) {
-      const result = generateStoryHTML(story);
-      $allStoriesList.append(result);
+      let result;
+
+      if(LOGGED_IN){
+        if(checkFavorited(story)){
+          result = generateStoryHTML(story, true); 
+        }
+        else{
+          result = generateStoryHTML(story);
+        }  
+      }
+      else{
+        result = generateStoryHTML(story);
+      }
+
+      $allStoriesList.append(result);   
     });
+  }
+
+  function checkFavorited(story){
+    let favoritedStories = user.favorites;
+    for(let favorited of favoritedStories){
+      if(favorited.storyId === story.storyId){
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
    * A function to render HTML for an individual Story instance
    */
 
-  function generateStoryHTML(story) {
+  function generateStoryHTML(story, favorited = false) {
     let hostName = getHostName(story.url);
+    let star = "far";
 
+    if(favorited){
+      star = "fas"  
+    }
     // render story markup
     const storyMarkup = $(
       `<li id="${story.storyId}">
-          <i class='far fa-star hidden'></i>
+          <i class='${star} fa-star hidden'></i>
           <a class="article-link" href="${story.url}" target="a_blank">
             <strong>${story.title}</strong>
            </a>
@@ -254,7 +282,6 @@ $(document).ready(async function() {
 
     $allStoriesList.on("click", ".fa-star", async function(evt){
       let storyId = evt.target.parentElement.id;
-      let userFavorites;
 
       if($(evt.target).hasClass("far")){
         await user.addFavorite(storyId);
@@ -292,9 +319,9 @@ $(document).ready(async function() {
 
       $allStoriesList.toggle();
       $favArticles.toggle();
-
+      let token = user.loginToken;
+      // debugger
       let current = await $.get(`https://hack-or-snooze-v2.herokuapp.com/users/${user.username}`, {token})
-      console.log(current)
       for (let story of current.user.favorites) {
          appendStory(story, $favArticles);
       }

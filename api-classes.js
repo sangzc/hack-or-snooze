@@ -153,8 +153,6 @@ class User {
     let userName = this.username;
     let token = this.loginToken;
     let response = await $.post(`https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`, {token})
-    return this.favorites = response;
-
   }
 
   async removeFavorite(storyId){
@@ -164,7 +162,6 @@ class User {
         {url: `https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`,
         type: "DELETE", 
         data: {token}});
-    return response;
   }
 
 
