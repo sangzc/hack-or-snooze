@@ -28,6 +28,7 @@ $(document).ready(async function() {
   const $navCreate = $("#nav-create");
   const $navFavorites = $("#nav-favorites");
   const $createStoryBtn =$("#create-story-submit-button");
+  const $favArticles = $("#favorited-articles");
 
   // if there is a token in localStorage, call User.stayLoggedIn
   //  to get an instance of User with the right details
@@ -246,9 +247,9 @@ $(document).ready(async function() {
   })
 
   // Creating a helper function to add a single story to the DOM when a user creates a story so they can see it right away
-  function appendStory(story) {
+  function appendStory(story, section = $allStoriesList) {
       const result = generateStoryHTML(story);
-      $allStoriesList.append(result);
+      section.append(result);
     }
 
     $allStoriesList.on("click", ".fa-star", async function(evt){
@@ -281,5 +282,20 @@ $(document).ready(async function() {
           data: {token}});
       return response;
     }
+
+    $navFavorites.on("click", async function() {
+
+      $allStoriesList.toggle();
+      $favArticles.toggle();
+
+      let current = await $.get(`https://hack-or-snooze-v2.herokuapp.com/users/${user.username}`, {token})
+      console.log(current)
+      for (let story of current.user.favorites) {
+         appendStory(story, $favArticles);
+      }
+
+    })
+
+
 });
 
