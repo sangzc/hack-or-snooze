@@ -154,10 +154,10 @@ $(document).ready(async function() {
 
       if(LOGGED_IN){
         if(checkFavorited(story)){
-          result = generateStoryHTML(story, true); 
+          result = generateFavoritedHTML(story); 
         }
         else{
-          result = generateStoryHTML(story);
+          result = generateLoggedInHTML(story);
         }  
       }
       else{
@@ -167,6 +167,7 @@ $(document).ready(async function() {
       $allStoriesList.append(result);   
     });
   }
+
 
   function checkFavorited(story){
     let favoritedStories = user.favorites;
@@ -178,21 +179,26 @@ $(document).ready(async function() {
     return false;
   }
 
+  function generateLoggedInHTML(story){
+    let storyMarkup = generateStoryHTML(story, "far fa-star");
+    return storyMarkup;
+  }
+
+  function generateFavoritedHTML(story){
+    let storyMarkup = generateStoryHTML(story, "fas fa-star");
+    return storyMarkup;
+  } 
+  
   /**
    * A function to render HTML for an individual Story instance
    */
 
-  function generateStoryHTML(story, favorited = false) {
+   function generateStoryHTML(story, showFavorited = "") {
     let hostName = getHostName(story.url);
-    let star = "far";
-
-    if(favorited){
-      star = "fas"  
-    }
     // render story markup
     const storyMarkup = $(
       `<li id="${story.storyId}">
-          <i class='${star} fa-star hidden'></i>
+          <i class='${showFavorited}'></i>
           <a class="article-link" href="${story.url}" target="a_blank">
             <strong>${story.title}</strong>
            </a>

@@ -149,19 +149,32 @@ class User {
     return existingUser;
   }
 
-  async addFavorite(storyId){
+  // takes care of API calls
+  async _toggleFavorite(storyId, toFavorite){
     let userName = this.username;
     let token = this.loginToken;
-    let response = await $.post(`https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`, {token})
+    let requestType;
+
+    if(toFavorite){
+      requestType = "POST"
+    }
+    else{
+      requestType = "DELETE"
+    }
+
+    let response = await $.ajax({
+      url: `https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`,
+      type: `${requestType}`,
+      data: {token}
+    });
+  }
+
+  async addFavorite(storyId){
+    await this._toggleFavorite(storyId, true)
   }
 
   async removeFavorite(storyId){
-    let userName = this.username;
-    let token = this.loginToken;
-    let response = await $.ajax(
-        {url: `https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`,
-        type: "DELETE", 
-        data: {token}});
+    await this._toggleFavorite(storyId, false)
   }
 
 
