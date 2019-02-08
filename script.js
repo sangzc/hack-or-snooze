@@ -281,12 +281,12 @@ $(document).ready(async function() {
   })
 
   // Creating a helper function to add a single story to the DOM when a user creates a story so they can see it right away
-  function appendStory(story, section = $allStoriesList) {
+    function appendStory(story, section = $allStoriesList) {
       const result = generateStoryHTML(story);
       section.append(result);
     }
 
-    $allStoriesList.on("click", ".fa-star", async function(evt){
+    async function toggleFavoriteDOM(evt){
       let storyId = evt.target.parentElement.id;
 
       if($(evt.target).hasClass("far")){
@@ -299,7 +299,10 @@ $(document).ready(async function() {
       } 
       
       $(evt.target).toggleClass("far fas");
-    });
+    }
+  
+    $allStoriesList.on("click", ".fa-star", await toggleFavoriteDOM);
+    $favArticles.on("click", ".fa-star", await toggleFavoriteDOM);
 
     // async function addFavorite(storyId){
     //   let userName = user.username;
@@ -326,12 +329,15 @@ $(document).ready(async function() {
       $allStoriesList.toggle();
       $favArticles.toggle();
       let token = user.loginToken;
-      // debugger
       let current = await $.get(`https://hack-or-snooze-v2.herokuapp.com/users/${user.username}`, {token})
-      for (let story of current.user.favorites) {
-         appendStory(story, $favArticles);
-      }
+      const userInstance = await User.stayLoggedIn();
+      user = userInstance;
 
+      for (let story of current.user.favorites) {
+        let result = generateFavoritedHTML(story);
+        $favArticles.append(result);
+      }
+      await generateStories();
     })
 
 
