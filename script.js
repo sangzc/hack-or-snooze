@@ -27,6 +27,7 @@ $(document).ready(async function() {
   const $navLogOut = $("#nav-logout");
   const $navCreate = $("#nav-create");
   const $navFavorites = $("#nav-favorites");
+  const $navOwnStories = $("#nav-own-stories");
   const $createStoryBtn =$("#create-story-submit-button");
   const $favArticles = $("#favorited-articles");
 
@@ -153,7 +154,7 @@ $(document).ready(async function() {
       let result;
 
       if(LOGGED_IN){
-        if(checkFavorited(story)){
+        if(user.checkFavorited(story)){
           result = generateFavoritedHTML(story); 
         }
         else{
@@ -164,26 +165,23 @@ $(document).ready(async function() {
         result = generateStoryHTML(story);
       }
 
+
+      //append remove button to only owr button
+      if(user.checkIfItsOwn(story)){
+        result.append("<i class='far fa-trash-alt'></i>")
+      }
+
       $allStoriesList.append(result);   
     });
   }
-
-
-  function checkFavorited(story){
-    let favoritedStories = user.favorites;
-    for(let favorited of favoritedStories){
-      if(favorited.storyId === story.storyId){
-        return true;
-      }
-    }
-    return false;
-  }
-
+ 
+  // create HTML for unfavorited story 
   function generateLoggedInHTML(story){
     let storyMarkup = generateStoryHTML(story, "far fa-star");
     return storyMarkup;
   }
 
+  // create HTML for favorited story
   function generateFavoritedHTML(story){
     let storyMarkup = generateStoryHTML(story, "fas fa-star");
     return storyMarkup;
@@ -193,7 +191,7 @@ $(document).ready(async function() {
    * A function to render HTML for an individual Story instance
    */
 
-   function generateStoryHTML(story, showFavorited = "") {
+  function generateStoryHTML(story, showFavorited = "") {
     let hostName = getHostName(story.url);
     // render story markup
     const storyMarkup = $(
@@ -205,7 +203,7 @@ $(document).ready(async function() {
           <small class="article-author">by ${story.author}</small>
           <small class="article-hostname ${hostName}">(${hostName})</small>
           <small class="article-username">posted by ${story.username}</small>
-          </li>`
+        </li>`
     );
 
     return storyMarkup;
@@ -227,12 +225,10 @@ $(document).ready(async function() {
   /**everything we want to happen in the UI when the user logs in */
   function showNavForLoggedInUser() {
     //We have to declare $star variable here because it is being made by the JS and cant be delcared when the page loads
-    const $star = $(".fa-star");
     $navLogin.hide();
     $navLogOut.show();
     $navCreate.show();
     $navFavorites.show();
-    $star.show();
   }
 
   // simple function to pull the hostname from a URL
@@ -276,13 +272,18 @@ $(document).ready(async function() {
     let newStory = await storyList.addStory(user, storyObj);
 
     $submitForm.slideToggle();
-    appendStory(newStory);
+
+    let current = await $.get(`https://hack-or-snooze-v2.herokuapp.com/users/${user.username}`, {token})
+    const userInstance = await User.stayLoggedIn();
+    user = userInstance;
+
+    await generateStories();
 
   })
 
   // Creating a helper function to add a single story to the DOM when a user creates a story so they can see it right away
-    function appendStory(story, section = $allStoriesList) {
-      const result = generateStoryHTML(story);
+    function appendStory(storyHTML, section = $allStoriesList) {
+      const result = generateStoryHTML(storyHTML);
       section.append(result);
     }
 
@@ -304,23 +305,6 @@ $(document).ready(async function() {
     $allStoriesList.on("click", ".fa-star", await toggleFavoriteDOM);
     $favArticles.on("click", ".fa-star", await toggleFavoriteDOM);
 
-    // async function addFavorite(storyId){
-    //   let userName = user.username;
-    //   let token = user.loginToken;
-    //   let response = await $.post(`https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`, {token})
-    //   return response;
-
-    // }
-
-    // async function removeFavorite(storyId){
-    //   let userName = user.username;
-    //   let token = user.loginToken;
-    //   let response = await $.ajax(
-    //       {url: `https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`,
-    //       type: "DELETE", 
-    //       data: {token}});
-    //   return response;
-    // }
 
     $navFavorites.on("click", async function() {
 
@@ -340,6 +324,16 @@ $(document).ready(async function() {
       await generateStories();
     })
 
+    // if clicked on remove, call removeStory
+    // takes care of DOM and UI
+    $allStoriesList.on("click", ".far.fa-trash-alt" ,async function(evt){
+      let storyID = evt.target.parentElement.id;
+
+      await storyList.removeStory(user, storyID);
+
+      await generateStories();
+
+    });
 
 });
 

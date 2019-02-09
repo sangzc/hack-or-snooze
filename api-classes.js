@@ -28,6 +28,10 @@ class StoryList {
      It should also accept an object which with a title, author, and url
      */
   
+  // _toggleAddRemove(user, story){
+    
+  // }
+
   async addStory(user, newStory) {
     // TODO - Implement this functions!
     // this function should return the newly created story so it can be used in the script.js file where it will be appended to the DOM
@@ -44,6 +48,20 @@ class StoryList {
 
     return story;
   }
+
+  // remove a story from the storylist
+  // takes care of the API call
+  async removeStory(user, storyIDToRemove){
+    const token = user.loginToken;
+
+    let response = await $.ajax({
+      url: `${BASE_URL}/stories/${storyIDToRemove}`,
+      type: "DELETE",
+      data: {token}
+    });
+    return response;
+  }
+
 }
 
 
@@ -163,7 +181,7 @@ class User {
     }
 
     let response = await $.ajax({
-      url: `https://hack-or-snooze-v2.herokuapp.com/users/${userName}/favorites/${storyId}`,
+      url: `${BASE_URL}/users/${userName}/favorites/${storyId}`,
       type: `${requestType}`,
       data: {token}
     });
@@ -177,6 +195,18 @@ class User {
     await this._toggleFavorite(storyId, false)
   }
 
+  // check if story has been added to favorited
+  checkFavorited(story){
+    let favoritedStories = this.favorites;
+    return favoritedStories.some(favorited => favorited.storyId === story.storyId);
+  }
+
+  // check if story is our own
+  checkIfItsOwn(story){
+    let ownStories = this.ownStories;
+    return ownStories.some(own => own.storyId === story.storyId);
+  }
+  
 
 }
 /**
