@@ -211,6 +211,14 @@ form > hr {
   display: none;
 }
 
+#all-articles-list li {
+  position: relative;
+}
+
+.fa-trash-alt {
+  position: absolute;
+  right: 0;
+}
 
 @media screen and (max-width: 576px) {
   body {
