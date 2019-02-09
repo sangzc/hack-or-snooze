@@ -32,10 +32,14 @@ a:hover {
 
 nav {
   display: flex;
-  background-color: rgb(253, 188, 130);
+  background-color: rgb(102, 171, 131);
   align-items: center;
   padding: 5px 20px;
   border-radius: 3px 3px 0 0;
+}
+
+#nav-all{
+  font-size: 20px;
 }
 
 .main-nav-links {
@@ -44,7 +48,7 @@ nav {
 
 .nav-link {
   font-size: 0.85rem;
-  margin: 0 3px;
+  margin: 0 5px;
 }
 
 .nav-right {
@@ -92,17 +96,14 @@ form input:focus {
 }
 
 form > button {
-  position: absolute;
-  top: 8%;
-  right: 7%;
-  width: 27rem;
+  width: 4rem;
   margin: 5px 0px 15px 65px;
   border: none;
   border-radius: 4px;
-  padding: 60px;
+  padding: 8px;
   font-size: 0.85rem;
-  background-color: peachpuff;
-  color: black;
+  background-color: rgb(102, 171, 131);
+  color: white;
   cursor: pointer;
   transition: all 0.15s;
 }
@@ -213,11 +214,14 @@ form > hr {
 
 #all-articles-list li {
   position: relative;
+  padding: 5px 0px;
+  border-bottom: 1px dashed rgb(102, 171, 131);
 }
 
 .fa-trash-alt {
   position: absolute;
-  right: 0;
+  right: 10px;
+  top: 0px;
 }
 
 @media screen and (max-width: 576px) {

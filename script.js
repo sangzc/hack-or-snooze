@@ -167,8 +167,10 @@ $(document).ready(async function() {
 
 
       //append remove button to only owr button
-      if(user.checkIfItsOwn(story)){
+      if(LOGGED_IN){
+        if(user.checkIfItsOwn(story)){
         result.append("<i class='far fa-trash-alt'></i>")
+        }
       }
 
       $allStoriesList.append(result);   
@@ -268,6 +270,7 @@ $(document).ready(async function() {
     let title = $("#title").val();
     let url = $('#url').val();
     let storyObj = {author, title, url};
+    let token = user.loginToken;
 
     let newStory = await storyList.addStory(user, storyObj);
 
