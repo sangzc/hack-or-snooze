@@ -132,6 +132,9 @@ form > hr {
 }
 
 .articles-list {
+  list-style-position: inside;
+  padding-inline-end: 1em;
+  padding-inline-start: 1em;
   margin: 20px 5px;
 }
 
@@ -212,6 +215,7 @@ form > hr {
   display: none;
 }
 
+#favorited-articles li,
 #all-articles-list li {
   position: relative;
   padding: 5px 0px;

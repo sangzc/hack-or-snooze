@@ -294,12 +294,10 @@ $(document).ready(async function() {
       let storyId = evt.target.parentElement.id;
 
       if($(evt.target).hasClass("far")){
-        await user.addFavorite(storyId);
-        // await addFavorite(storyId); 
+        await user.addFavorite(storyId); 
       }
       else{
         await user.removeFavorite(storyId);
-        // removeFavorite(storyId);
       } 
       
       $(evt.target).toggleClass("far fas");
